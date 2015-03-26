@@ -9,10 +9,12 @@ namespace CVLeap
 	{
 		static void Main()
 		{
-			ChessSniffer();
+			//var calibrator = new CalibrateStereoCamera();
+			
+			CalibrationSession();
 		}
 
-		static void ChessSniffer()
+		static void ChessSnifferSession()
 		{
 			var sniffer = new ChessboardSniffer(9, 6);
 
@@ -23,6 +25,13 @@ namespace CVLeap
 				sniffer.Sniff(new IplImage(String.Format(pair[0], i), LoadMode.GrayScale));
 				sniffer.Sniff(new IplImage(String.Format(pair[1], i), LoadMode.GrayScale));
 			}
+
+		}
+
+		static void CalibrationSession()
+		{
+			var calibrator = new StereoCalibrator("..\\..\\img\\", 25, 9, 6);
+			calibrator.Calibrate();
 
 		}
 
