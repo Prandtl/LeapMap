@@ -13,8 +13,8 @@ namespace CVLeap
 			outPath = path;
 			size = new CvSize(width, height);
 			this.imagesNum = imagesNum;
-			leftPoints=new List<CvPoint2D32f>();
-			rightPoints=new List<CvPoint2D32f>();
+			leftPoints = new List<CvPoint2D32f>();
+			rightPoints = new List<CvPoint2D32f>();
 		}
 
 
@@ -50,15 +50,15 @@ namespace CVLeap
 
 			CvMat imagePoints1 = new CvMat(allPoints, 1, MatrixType.F32C2, leftPoints.ToArray());
 			CvMat imagePoints2 = new CvMat(allPoints, 1, MatrixType.F32C2, rightPoints.ToArray());
-			CvMat pointCount = new CvMat(imagesNum, 1, MatrixType.S32C1, allPoints);
+			CvMat pointCount = new CvMat(imagesNum, 1, MatrixType.S32C1, Enumerable.Repeat(nBoards, imagesNum).ToArray());
 			CvMat cameraMatrix1 = CvMat.Identity(3, 3, MatrixType.F64C1);
 			CvMat cameraMatrix2 = CvMat.Identity(3, 3, MatrixType.F64C1);
 			CvMat distCoeffs1 = new CvMat(1, 4, MatrixType.F64C1);
 			CvMat distCoeffs2 = new CvMat(1, 4, MatrixType.F64C1);
 			CvMat R = new CvMat(3, 3, MatrixType.F64C1);
 			CvMat T = new CvMat(3, 1, MatrixType.F64C1);
-			CvMat E = null;
-			CvMat F = null;
+			CvMat E = new CvMat(3, 3, MatrixType.F64C1);
+			CvMat F = new CvMat(3, 3, MatrixType.F64C1);
 
 			try
 			{
@@ -71,7 +71,7 @@ namespace CVLeap
 					distCoeffs1,
 					cameraMatrix2,
 					distCoeffs2,
-					size,
+					new CvSize(640,240), 
 					R,
 					T,
 					E,
@@ -81,11 +81,33 @@ namespace CVLeap
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("no no NOOOO!");
 				Console.WriteLine(e.Message);
 				Console.WriteLine(imagePoints1.Rows);
+				Console.ReadKey();
 			}
-			Console.WriteLine("sucsess");
+			Console.WriteLine("success");
+
+			CvMat R1 = new CvMat(3, 3, MatrixType.F64C1);
+			CvMat R2 = new CvMat(3, 3, MatrixType.F64C1);
+			CvMat P1 = new CvMat(3, 4, MatrixType.F64C1);
+			CvMat P2 = new CvMat(3, 4, MatrixType.F64C1);
+			CvMat Q = new CvMat(4, 4, MatrixType.F64C1);
+
+			Cv.StereoRectify(cameraMatrix1, cameraMatrix2, distCoeffs1, distCoeffs2,
+			 new CvSize(640, 240), R, T, R1, R2, P1, P2, Q,
+			  StereoRectificationFlag.ZeroDisparity, 1, new CvSize(640, 240));
+
+			using (CvMemStorage mem = new CvMemStorage())
+			using (CvFileStorage fs = new CvFileStorage("..\\..\\extrinsic.yml", mem, FileStorageMode.Write))
+			{
+				fs.Write("R", R);
+				fs.Write("T", T);
+				fs.Write("R1", R1);
+				fs.Write("R2", R2);
+				fs.Write("P1", P1);
+				fs.Write("P1", P1);
+				fs.Write("Q", Q);
+			}
 		}
 
 		private CvPoint2D32f[] FindChessboardCorners(IplImage image)

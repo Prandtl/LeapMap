@@ -12,6 +12,8 @@ namespace CVLeap
 			//var calibrator = new CalibrateStereoCamera();
 			
 			CalibrationSession();
+
+			
 		}
 
 		static void ChessSnifferSession()

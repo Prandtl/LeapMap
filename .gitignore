@@ -10,7 +10,6 @@
 # Build results
 [Dd]ebug/
 [Rr]elease/
-x64/
 
 # ReSharper is a .NET coding add-in
 _ReSharper*
