@@ -71,7 +71,7 @@ namespace CVLeap
 					distCoeffs1,
 					cameraMatrix2,
 					distCoeffs2,
-					new CvSize(640,240), 
+					new CvSize(640, 240),
 					R,
 					T,
 					E,
@@ -86,6 +86,7 @@ namespace CVLeap
 				Console.ReadKey();
 			}
 			Console.WriteLine("success");
+			Console.ReadKey();
 
 			CvMat R1 = new CvMat(3, 3, MatrixType.F64C1);
 			CvMat R2 = new CvMat(3, 3, MatrixType.F64C1);
@@ -95,8 +96,29 @@ namespace CVLeap
 
 			Cv.StereoRectify(cameraMatrix1, cameraMatrix2, distCoeffs1, distCoeffs2,
 			 new CvSize(640, 240), R, T, R1, R2, P1, P2, Q,
-			  StereoRectificationFlag.ZeroDisparity, 1, new CvSize(640, 240));
+			  StereoRectificationFlag.ZeroDisparity, 0, new CvSize(640, 240));
 
+			//SaveMatrices(R, T, R1, R2, P1, P2, Q);
+
+			CvMat mapx1 = new CvMat(240, 640, MatrixType.F32C1);
+			var mapy1 = new CvMat(240, 640, MatrixType.F32C1);
+			Cv.InitUndistortRectifyMap(cameraMatrix1, distCoeffs1, R1, P1, mapx1, mapy1);
+
+
+
+			var input = new IplImage("..\\..\\img\\left13.bmp");
+			IplImage outImg = new IplImage(input.Size, input.Depth, input.NChannels);
+			Cv.ShowImage("input", input);
+			Cv.WaitKey();
+			Cv.Remap(input, outImg, mapx1, mapy1);
+			Cv.ShowImage("out", outImg);
+			Cv.WaitKey();
+
+			Console.ReadKey();
+		}
+
+		private void SaveMatrices(CvMat R, CvMat T, CvMat R1, CvMat R2, CvMat P1, CvMat P2, CvMat Q)
+		{
 			using (CvMemStorage mem = new CvMemStorage())
 			using (CvFileStorage fs = new CvFileStorage("..\\..\\extrinsic.yml", mem, FileStorageMode.Write))
 			{
@@ -105,7 +127,7 @@ namespace CVLeap
 				fs.Write("R1", R1);
 				fs.Write("R2", R2);
 				fs.Write("P1", P1);
-				fs.Write("P1", P1);
+				fs.Write("P2", P2);
 				fs.Write("Q", Q);
 			}
 		}

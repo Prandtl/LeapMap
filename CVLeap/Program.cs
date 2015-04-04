@@ -11,7 +11,7 @@ namespace CVLeap
 		{
 			//var calibrator = new CalibrateStereoCamera();
 			
-			CalibrationSession();
+			GraphicDisparityMap();
 
 			
 		}
@@ -32,7 +32,7 @@ namespace CVLeap
 
 		static void CalibrationSession()
 		{
-			var calibrator = new StereoCalibrator("..\\..\\img\\", 25, 9, 6);
+			var calibrator = new StereoCalibrator("..\\..\\img\\", 20, 9, 6);
 			calibrator.Calibrate();
 
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using OpenCvSharp;
 using OpenCvSharp.CPlusPlus;
 using OpenCvSharp.Extensions;
 
@@ -22,6 +23,14 @@ namespace CVLeap
 			sgbm.FullDP = false;
 			sgbm.P1 = 600;
 			sgbm.P2 = 2400;
+
+			//using (CvFileStorage fs = new CvFileStorage("..\\..\\extrinsinc.yml", null, FileStorageMode.Read))
+			//{
+			//	CvFileNode node;
+			//	node = fs.GetFileNodeByName(null,"R");
+			//	CvMat R = fs.Read<CvMat>(node);
+			//	Console.WriteLine(R);
+			//}
 		}
 
 		public Bitmap GenerateDisparityFrom(Bitmap left, Bitmap right)
@@ -49,7 +58,10 @@ namespace CVLeap
 			return null;
 		}
 
-
+		private Bitmap Rectify(Bitmap image)
+		{
+			return image;
+		}
 
 
 		private Mat res;
